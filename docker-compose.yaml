@@ -1,0 +1,26 @@
+version: "3.10"
+
+services:
+  db:
+    image: postgres
+    container_name: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  web_rex_it_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web_rex_it_app
+    env_file:
+      - ./project/.env
+    command: >
+      sh -c "cd project &&
+             python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
